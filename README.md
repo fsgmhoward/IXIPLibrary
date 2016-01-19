@@ -55,6 +55,7 @@ http://ip.example.com/8.8.8.8
 Will actually request for
 ```
 {YOUR_ROOT_FOLDER}/ip/json?ip=8.8.8.8
+```
 
 ## Versioning ##
 
