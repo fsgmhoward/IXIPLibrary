@@ -20,9 +20,9 @@
  * API Library is from: https://github.com/maxmind/GeoIP2-php
  */
 include './log.class.php';
-$log = new log('./json.log', NULL, true, true);
+$log = new log('./json.log', null, true, true);
 
-if(!isset($_GET['ip'])){
+if (!isset($_GET['ip'])) {
     $log->add('Failed Attempt! Missing Parameter');
     exit('Missing Parameter');
 }
@@ -36,16 +36,16 @@ use GeoIp2\Database\Reader;
 
 $reader = new Reader("./GeoLite2-$type.mmdb");
 
-if($type = 'City'){
+if ($type = 'City') {
     $record = $reader->city($_GET['ip']);
-}else{
+} else {
     $record = $reader->country($_GET['ip']);
 }
 
 $json = array();
 
 $json['country'] = $record->country->isoCode;
-if($type = 'City'){
+if ($type = 'City') {
     $json['state'] = $record->mostSpecificSubdivision->isoCode;
     $json['city'] = $record->city->name;
     $json['postcode'] = $record->postal->code;
