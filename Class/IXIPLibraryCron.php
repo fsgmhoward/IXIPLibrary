@@ -33,7 +33,7 @@ class IXIPLibraryCron
     
     private function __construct($type, $isLog, $logFile)
     {
-        $this->log = $isLog ? new Lib\IXLogging($logFile, array(true)) : null;
+        $this->log = $isLog ? new Lib\IXLogging($logFile, null, array(true)) : null;
         $this->log ? $this->log->add(' [INFO] Cron Class Initiated') : null;
         $this->type = $type;
         return true;
@@ -49,7 +49,7 @@ class IXIPLibraryCron
         if (self::$self instanceof self) {
             return false;
         } else {
-            $logFile = $logFile ? $logFile : (__DIR__.'/Log/Cron.log');
+            $logFile = $logFile ? $logFile : (__DIR__.'/../Log/Cron.log');
             self::$self = new self($type, $isLog, $logFile);
             self::$self->classVersionCheck();
             return self::$self->ipDatabaseVersionCheck();

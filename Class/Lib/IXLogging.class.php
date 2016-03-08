@@ -30,19 +30,13 @@ class IXLogging
         $isIP = false,
         $isIPLengthFixed = true
     ) {
-    
-        //Replace the '/' with '\' when running under Windows OS
-        $logFileX = stripos($logFile, '/') ? explode('/', $logFile) : explode('\\', $logFile);
-
-        //Create the respective folder
-        $j = '';
-        $k = 0;
-        while ($k<(sizeof($logFileX)-1)) {
-            $j .= $logFile[$k]."/";
-            if (!file_exists($j)) {
-                mkdir($j);
-            }
-            $k++;
+        //Generate log file folders
+        if ($pos = strrpos($logFile, '/')) {
+            if (!file_exists($folder = substr($logFile,0,$pos)))
+                mkdir($folder, 0777, true);
+        } elseif ($pos = strrpos($logFile, '\\')) {
+            if (!file_exists($folder = substr($logFile,0,$pos)))
+                mkdir(substr($folder, 0777, true));
         }
         $this->logFile = fopen($logFile, 'at');
 
