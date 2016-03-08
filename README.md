@@ -1,20 +1,30 @@
-# Information of IP #
+# IX IP Library #
+## An IP Library Dependent on MaxMind IP Database ##
 
 ## Description ##
 
 This API can help you get information of a IP.
-For example, the country, state, city or even the latitude and longitude of the IP address.
+For example, the country, state, city or even the latitude, longitude or the ISP information of an IP address.
 
 ## Usage ##
 
-You can just simply upload these files to your server, then load the page
+You can just simply upload these files to your server. Then use composer to download dependencies.
+These commands are to be executed **USING BASH(Linux) OR COMMAND PROMPT(Windows)**
 ```
-http(s)://yourserver/yourfolder/cron.php
+# If your composer can be run directly
+composer install
+
+# If you have not installed composer globally
+curl -sS https://getcomposer.org/installer | php
+php composer.phar install
 ```
-This will update/download the IP database onto your server.
+
+And then run `cron.php` after all dependencies are downloaded.
+
+This will download the IP database automatically onto your server.
 If you want only the country information, please edit the cron.php and json.php before you run cron.php:
 ```
-$type = 'City';
+$type = 'Country';
 ```
 
 After the downloading process finishes, you can use this to get information:
@@ -54,20 +64,18 @@ http://ip.example.com/8.8.8.8
 ```
 Will actually request for
 ```
-{YOUR_ROOT_FOLDER}/ip/json?ip=8.8.8.8
+{YOUR_ROOT_FOLDER}/ip/json.php?ip=8.8.8.8
 ```
 
 ## Versioning ##
 
-The cron.php will check up the latest version from 
-```
-https://version.ixnet.work/ip_json.program.php
-```
-and if the versions differ, a notice will appear in your cron.log (or the log file you set)
+The cron.php will check up the latest version from `http://version.ixnet.work/IXIPLibrary.fsgmhoward.php` and if the versions differ, a notice will appear in your Log/Cron.log (or the log file you set)
+
+Although the cron script will help you check the newest release, it is a good habit to check this page very often.
 
 ## Copyright and License ##
 
-Copyright 2016 Howard Liu
+Copyright (C) 2016 Howard Liu
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
