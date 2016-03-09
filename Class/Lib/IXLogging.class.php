@@ -32,11 +32,13 @@ class IXLogging
     ) {
         //Generate log file folders
         if ($pos = strrpos($logFile, '/')) {
-            if (!file_exists($folder = substr($logFile,0,$pos)))
+            if (!file_exists($folder = substr($logFile, 0, $pos))) {
                 mkdir($folder, 0777, true);
+            }
         } elseif ($pos = strrpos($logFile, '\\')) {
-            if (!file_exists($folder = substr($logFile,0,$pos)))
+            if (!file_exists($folder = substr($logFile, 0, $pos))) {
                 mkdir(substr($folder, 0777, true));
+            }
         }
         $this->logFile = fopen($logFile, 'at');
 
@@ -47,15 +49,7 @@ class IXLogging
          * $token[3] int,  means the length of the token
          */
         if ($token[0]) {
-            if (isset($token[1]) && is_int($token[1])) {
-                if (isset($token[2])&& is_int($token[2])) {
-                    $this->token = $this->generateRandomCode($token[1], $token[2]);
-                } else {
-                    $this->token = $this->generateRandomCode($token[1]);
-                }
-            } else {
-                $this->token = $this->generateRandomCode();
-            }
+            $this->generateNewToken($token);
         }
         if ($isIP) {
             $this->ip = $this->getIP($isIPLengthFixed);
@@ -135,5 +129,28 @@ class IXLogging
             $ip = substr($ip, 0, 15);
         }
         return $ip;
+    }
+
+    /**
+     * Write a message to the log file that the session has been terminated.
+     * @return int
+     */
+    public function terminate()
+    {
+        $this->generateNewToken();
+        return $this->add(' [INFO] Session Terminated');
+    }
+
+    private function generateNewToken($token = [])
+    {
+        if (isset($token[1]) && is_int($token[1])) {
+            if (isset($token[2])&& is_int($token[2])) {
+                return $this->token = $this->generateRandomCode($token[1], $token[2]);
+            } else {
+                return $this->token = $this->generateRandomCode($token[1]);
+            }
+        } else {
+            return $this->token = $this->generateRandomCode();
+        }
     }
 }

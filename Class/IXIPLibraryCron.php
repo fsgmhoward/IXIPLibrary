@@ -22,6 +22,8 @@
  */
 namespace IXNetwork;
 
+use IXNetwork\Lib\IXLogging;
+
 class IXIPLibraryCron
 {
     // DO NOT edit this constant's value as it is for the class version check
@@ -33,7 +35,7 @@ class IXIPLibraryCron
     
     private function __construct($type, $isLog, $logFile)
     {
-        $this->log = $isLog ? new Lib\IXLogging($logFile, null, array(true)) : null;
+        $this->log = $isLog ? new IXLogging($logFile, null, array(true)) : null;
         $this->log ? $this->log->add(' [INFO] Cron Class Initiated') : null;
         $this->type = $type;
         return true;
@@ -69,32 +71,34 @@ class IXIPLibraryCron
     
     private function ipDatabaseVersionCheck()
     {
-        if (file_exists(__DIR__."/GeoLite2-$this->type.mmdb")) {
-            $localVersion = md5_file(__DIR__."/GeoLite2-$this->type.mmdb");
+        if (file_exists(__DIR__."/../GeoLite2-$this->type.mmdb")) {
+            $localVersion = md5_file(__DIR__."/../GeoLite2-$this->type.mmdb");
             $remoteVersion = file_get_contents("http://geolite.maxmind.com/download/geoip/database/GeoLite2-$this->type.md5");
             if ($localVersion != $remoteVersion) {
                 $this->log ? $this->log->add(" [INFO] Version Mismatch, A Newer Version Will Be Downloaded") : null;
             } else {
-                $this->log ? $this->log->add(" [INFO] GeoLite2-$this->type.mmdb Is Up-to-date") : null;
-                $this->log ? $this->log->add(' [INFO] Exited') : null;
+                if ($this->log) {
+                    $this->log->add(" [INFO] GeoLite2-$this->type.mmdb Is Up-to-date");
+                    $this->log->terminate();
+                }
                 return true;
             }
         }
 
         // Remove the old version database
-        if (file_exists(__DIR__."/GeoLite2-$this->type.mmdb")) {
-            unlink(__DIR__."/GeoLite2-$this->type.mmdb");
+        if (file_exists(__DIR__."/../GeoLite2-$this->type.mmdb")) {
+            unlink(__DIR__."/../GeoLite2-$this->type.mmdb");
         }
 
         // Download the new database from MaxMind
         $remoteFile = "http://geolite.maxmind.com/download/geoip/database/GeoLite2-$this->type.mmdb.gz";
         $remoteFile = file_get_contents($remoteFile);
         if ($remoteFile) {
-            $localFile = fopen(__DIR__."/GeoLite2-$this->type.mmdb.gz", 'wb');
+            $localFile = fopen(__DIR__."/../GeoLite2-$this->type.mmdb.gz", 'wb');
             fwrite($localFile, $remoteFile);
             fclose($localFile);
-            self::ungz(__DIR__."/GeoLite2-$this->type.mmdb.gz");
-            unlink(__DIR__."/GeoLite2-$this->type.mmdb.gz");
+            self::ungz(__DIR__."/../GeoLite2-$this->type.mmdb.gz");
+            unlink(__DIR__."/../GeoLite2-$this->type.mmdb.gz");
             $this->log ? $this->log->add(" [INFO] Download Finished, A Newer Version Has Been Extracted") : null;
             $this->log ? $this->log->add(' [INFO] Exited') : null;
             return true;
