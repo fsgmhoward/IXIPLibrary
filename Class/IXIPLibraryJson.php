@@ -61,6 +61,7 @@ class IXIPLibraryJson
             self::$lastType = $type;
         }
 
+        // Some codes refer to https://github.com/maxmind/GeoIP2-php/blob/master/README.md
         if ($type = 'City') {
             $record = self::$reader->city($ip);
             $json['state'] = $record->mostSpecificSubdivision->isoCode;
@@ -75,7 +76,7 @@ class IXIPLibraryJson
         $json['database'] = 'GeoIP2Lite Database by Maxmind - http://www.maxmind.com';
 
         if ($isLogging) {
-            self::$log->add(' [INFO] Data Successfully Queried');
+            self::$log->add(' [INFO] Query Has Been Successfully Handled');
             self::$log->terminate();
         }
 

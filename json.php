@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * Copyright 2016 Howard Liu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,46 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
- * Author's blog: https://blog.ixnet.work
- * Version 1.0
- * API Library is from: https://github.com/maxmind/GeoIP2-php
+
+/**
+ * @Author Howard Liu
+ * Author's website: https://www.ixnet.work
+ * Version 2.0
  */
-include './log.class.php';
-$log = new log('./json.log', null, true, true);
 
 if (!isset($_GET['ip'])) {
-    $log->add('Failed Attempt! Missing Parameter');
     exit('Missing Parameter');
 }
 
+require "vendor/autoload.php";
+require 'Class/Lib/IXLogging.class.php';
+require 'Class/IXIPLibraryJson.php';
+
 //Set type, City or Country
 $type = 'City';
-$log->add("Started A Session for $type Query. IP is ".$_GET['ip']);
-//Some codes refer to https://github.com/maxmind/GeoIP2-php/blob/master/README.md
-include "./vendor/autoload.php";
-use GeoIp2\Database\Reader;
 
-$reader = new Reader("./GeoLite2-$type.mmdb");
-
-if ($type = 'City') {
-    $record = $reader->city($_GET['ip']);
+header('Content-Type: application/json');
+$result = IXNetwork\IXIPLibraryJson::getJson($_GET['ip'], $type);
+if ($result) {
+    exit(json_encode($result));
 } else {
-    $record = $reader->country($_GET['ip']);
+    exit(json_encode(['error' => 'Please refer to the log.']));
 }
-
-$json = array();
-
-$json['country'] = $record->country->isoCode;
-if ($type = 'City') {
-    $json['state'] = $record->mostSpecificSubdivision->isoCode;
-    $json['city'] = $record->city->name;
-    $json['postcode'] = $record->postal->code;
-    $json['latitude'] = $record->location->latitude;
-    $json['longitude'] = $record->location->longitude;
-}
-$json['database'] = 'GeoIP2Lite Database by Maxmind - http://www.maxmind.com';
-
-header('content-type: application/json');
-echo json_encode($json);
-$log->add('Finished Query. Session Terminated');
