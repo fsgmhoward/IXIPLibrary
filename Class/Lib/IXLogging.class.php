@@ -137,8 +137,9 @@ class IXLogging
      */
     public function terminate()
     {
+        $this->add(' [INFO] Session Terminated');
         $this->generateNewToken();
-        return $this->add(' [INFO] Session Terminated');
+        return true;
     }
 
     private function generateNewToken($token = [])
