@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * Copyright 2016 Howard Liu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,32 +15,28 @@
  * limitations under the License.
  */
 
-/*
+/**
  * Cron class for IP Library
- * Dependence:
- *  - IX Logging Class
  */
-namespace IXNetwork;
+namespace IXNetwork\IPLib;
 
-use IXNetwork\Lib\IXLogging;
+use IXNetwork\Lib\Logging;
 
-class IXIPLibraryCron
+class Cron
 {
-    // DO NOT edit this constant's value as it is for the class version check
-    const classVersion = '2.0';
-    
     private static $self;
     private $log;
     private $type;
     
     private function __construct($type, $isLog, $logFile)
     {
-        $this->log = $isLog ? new IXLogging($logFile, null, array(true)) : null;
+        $this->log = $isLog ? new Logging($logFile, null, array(true)) : null;
         $this->log ? $this->log->add(' [INFO] Cron Class Initiated') : null;
         $this->type = $type;
         return true;
     }
 
+    // Prevent the class initiated more than once
     private function __clone()
     {
     }
@@ -51,28 +47,16 @@ class IXIPLibraryCron
         if (self::$self instanceof self) {
             return false;
         } else {
-            $logFile = $logFile ? $logFile : (__DIR__.'/../Log/Cron.log');
+            $logFile = $logFile ? $logFile : ('Log/Cron.log');
             self::$self = new self($type, $isLog, $logFile);
-            self::$self->classVersionCheck();
             return self::$self->ipDatabaseVersionCheck();
         }
     }
     
-    private function classVersionCheck()
-    {
-        $remoteVersion = file_get_contents('http://version.ixnet.work/IXIPLibrary.fsgmhoward.php');
-        if (self::classVersion != $remoteVersion) {
-            $this->log ? $this->log->add(" [INFO] Newer version is found") : null;
-            $this->log ? $this->log->add("        Local version is ".self::classVersion." while remote version is $remoteVersion") : null;
-            $this->log ? $this->log->add("        Please update via https://github.com/fsgmhoward/IXIPLibrary/releases") : null;
-        }
-        return true;
-    }
-    
     private function ipDatabaseVersionCheck()
     {
-        if (file_exists(__DIR__."/../GeoLite2-$this->type.mmdb")) {
-            $localVersion = md5_file(__DIR__."/../GeoLite2-$this->type.mmdb");
+        if (file_exists("GeoLite2-$this->type.mmdb")) {
+            $localVersion = md5_file("GeoLite2-$this->type.mmdb");
             $remoteVersion = file_get_contents("http://geolite.maxmind.com/download/geoip/database/GeoLite2-$this->type.md5");
             if ($localVersion != $remoteVersion) {
                 $this->log ? $this->log->add(" [INFO] Version Mismatch, A Newer Version Will Be Downloaded") : null;
@@ -86,19 +70,19 @@ class IXIPLibraryCron
         }
 
         // Remove the old version database
-        if (file_exists(__DIR__."/../GeoLite2-$this->type.mmdb")) {
-            unlink(__DIR__."/../GeoLite2-$this->type.mmdb");
+        if (file_exists("GeoLite2-$this->type.mmdb")) {
+            unlink("GeoLite2-$this->type.mmdb");
         }
 
         // Download the new database from MaxMind
         $remoteFile = "http://geolite.maxmind.com/download/geoip/database/GeoLite2-$this->type.mmdb.gz";
         $remoteFile = file_get_contents($remoteFile);
         if ($remoteFile) {
-            $localFile = fopen(__DIR__."/../GeoLite2-$this->type.mmdb.gz", 'wb');
+            $localFile = fopen("GeoLite2-$this->type.mmdb.gz", 'wb');
             fwrite($localFile, $remoteFile);
             fclose($localFile);
-            self::ungz(__DIR__."/../GeoLite2-$this->type.mmdb.gz");
-            unlink(__DIR__."/../GeoLite2-$this->type.mmdb.gz");
+            self::ungz("GeoLite2-$this->type.mmdb.gz");
+            unlink("GeoLite2-$this->type.mmdb.gz");
             $this->log ? $this->log->add(" [INFO] Download Finished, A Newer Version Has Been Extracted") : null;
             $this->log ? $this->log->add(' [INFO] Exited') : null;
             return true;

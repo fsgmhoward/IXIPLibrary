@@ -1,6 +1,3 @@
 .idea/
-*.gz
-*.mmdb
-*.log
 vendor/
-Log/
+composer.lock

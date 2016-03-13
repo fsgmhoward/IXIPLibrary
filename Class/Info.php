@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * Copyright 2016 Howard Liu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,29 +15,26 @@
  * limitations under the License.
  */
 
-/*
+/**
  * Json class for IP Library
- * Dependence:
- *  - IX Logging Class
- *  - Composer Vendor
  */
 
-namespace IXNetwork;
+namespace IXNetwork\IPLib;
 
 use GeoIp2\Database\Reader;
-use IXNetwork\Lib\IXLogging;
+use IXNetwork\Lib\Logging;
 
-class IXIPLibraryJson
+class Info
 {
     private static $log;
     private static $reader;
     private static $lastType = null;
 
-    public static function getJson($ip, $type = 'City', $isLogging = true, $logFile = null)
+    public static function getInfo($ip, $type = 'City', $isLogging = true, $logFile = null)
     {
-        if ((! self::$log instanceof IXLogging) && $isLogging) {
-            $logFile = $logFile ? $logFile : __DIR__.'/../Log/Json.log';
-            self::$log = new Lib\IXLogging($logFile, null, array(true), true);
+        if ((! self::$log instanceof Logging) && $isLogging) {
+            $logFile = $logFile ? $logFile : 'Log/Info.log';
+            self::$log = new Logging($logFile, null, array(true), true);
             self::$log->add(' [INFO] Json Log File Initiated');
         }
 
@@ -50,36 +47,37 @@ class IXIPLibraryJson
         }
 
         if ($type != self::$lastType) {
-            if (! (file_exists(__DIR__."/../GeoLite2-$type.mmdb"))) {
+            if (! (file_exists("GeoLite2-$type.mmdb"))) {
                 if ($isLogging) {
                     self::$log->add('[ERROR] Database Not Found. Please Run cron.php to download the latest database.');
                     self::$log->terminate();
                 }
                 return false;
             }
-            self::$reader = new Reader(__DIR__."/../GeoLite2-$type.mmdb");
+            self::$reader = new Reader("GeoLite2-$type.mmdb");
             self::$lastType = $type;
         }
 
         // Some codes refer to https://github.com/maxmind/GeoIP2-php/blob/master/README.md
         if ($type = 'City') {
             $record = self::$reader->city($ip);
-            $json['state'] = $record->mostSpecificSubdivision->isoCode;
-            $json['city'] = $record->city->name;
-            $json['postcode'] = $record->postal->code;
-            $json['latitude'] = $record->location->latitude;
-            $json['longitude'] = $record->location->longitude;
+            $info['state'] = $record->mostSpecificSubdivision->isoCode;
+            $info['city'] = $record->city->name;
+            $info['postcode'] = $record->postal->code;
+            $info['latitude'] = $record->location->latitude;
+            $info['longitude'] = $record->location->longitude;
         } else {
             $record = self::$reader->country($ip);
         }
-        $json['country'] = $record->country->isoCode;
-        $json['database'] = 'GeoIP2Lite Database by Maxmind - http://www.maxmind.com';
+        $info['country'] = $record->country->isoCode;
+        $info['database'] = 'GeoIP2Lite Database by Maxmind - http://www.maxmind.com';
+        $info['raw'] = $record;
 
         if ($isLogging) {
             self::$log->add(' [INFO] Query Has Been Successfully Handled');
             self::$log->terminate();
         }
 
-        return $json;
+        return $info;
     }
 }

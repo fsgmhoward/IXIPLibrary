@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "884992a6ef845842281892bea2e61b47",
-    "content-hash": "0d221161805b2ccdc43be732dd860b60",
+    "hash": "8ed4c588a38141f63bf802a565f46f2f",
+    "content-hash": "827c61ea07f19077f5f53bf0003ca254",
     "packages": [
         {
             "name": "geoip2/geoip2",
@@ -56,6 +56,37 @@
                 "maxmind"
             ],
             "time": "2015-09-24 17:29:28"
+        },
+        {
+            "name": "ix-network/php-common-library",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://git.oschina.net/fsgmhoward/IXNetwork-PHPLib.git",
+                "reference": "bcf78655bb26f87c57d8795d60c212d8b98127fb"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "IXNetwork\\Lib\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Howard Liu",
+                    "email": "howard@ixnet.work"
+                }
+            ],
+            "description": "Some common PHP libraries",
+            "keywords": [
+                "logging",
+                "mysql"
+            ],
+            "time": "2016-03-13 05:21:06"
         },
         {
             "name": "maxmind-db/reader",
@@ -153,7 +184,9 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "ix-network/php-common-library": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

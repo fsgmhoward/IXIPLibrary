@@ -1,5 +1,22 @@
 {
-    "require": {
-        "geoip2/geoip2": "^2.3"
+  "name": "ix-network/ip-info-api",
+  "description": "An API for you to get geographical information of an IP",
+  "keywords": ["IP", "API"],
+  "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "Howard Liu",
+      "email": "howard@ixnet.work",
+      "homepage": "https://www.ixnet.work"
     }
+  ],
+  "require": {
+      "geoip2/geoip2": "^2.3",
+      "ix-network/php-common-library": "dev-master"
+  },
+  "autoload": {
+    "psr-4": {
+      "IXNetwork\\IPLib\\": "Class/"
+    }
+  }
 }
