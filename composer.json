@@ -1,6 +1,6 @@
 {
   "name": "ix-network/ip-info-api",
-  "description": "An API for you to get geographical information of an IP",
+  "description": "An API to get information of an IP",
   "keywords": ["IP", "API"],
   "license": "Apache-2.0",
   "authors": [
