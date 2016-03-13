@@ -9,7 +9,7 @@ For example, the country, state, city or even the latitude, longitude or the ISP
 ## Installation ##
 ```
 curl -sS https://getcomposer.org/installer | php
-php composer.phar require "ix-network/ip-info-api"
+php composer.phar require "ix-network/ip-info-api:dev-master"
 ```
 
 ## How to Use ##
